@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
+    <width>835</width>
     <height>644</height>
    </rect>
   </property>
@@ -17,13 +17,25 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="product_tab">
       <attribute name="title">
        <string>product</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="2" column="0">
+        <widget class="QTableWidget" name="tableWidget">
+         <property name="rowCount">
+          <number>0</number>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <column/>
+         <column/>
+        </widget>
+       </item>
        <item row="0" column="0">
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0">
@@ -79,18 +91,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item row="2" column="0">
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="rowCount">
-          <number>0</number>
-         </property>
-         <property name="columnCount">
-          <number>2</number>
-         </property>
-         <column/>
-         <column/>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -217,6 +217,25 @@
           </spacer>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="sd_tab">
+      <attribute name="title">
+       <string>sale_detail</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QTableWidget" name="table_sd">
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+        </widget>
        </item>
       </layout>
      </widget>
