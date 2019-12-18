@@ -1,6 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QMessageBox, QAction
+from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QMessageBox, QAction, \
+    QVBoxLayout, QMenuBar
 from dao.product_dao import ProductDao
 from dao.sale_dao import SaleDao
 from dao.sale_detail_dao import Sale_Detail_Dao
@@ -51,18 +52,21 @@ class Application_form(QWidget):
         self.ui.btn_update.clicked.connect(self.update_item)
         self.ui.btn_delete.clicked.connect(self.del_item)
         self.ui.btn_init.clicked.connect(self.init_item)
+        self.ui.btn_pd_explain.clicked.connect(self.explain_pd)
+
         # sale 버튼 연결
         self.ui.btn_insert_2.clicked.connect(self.add_item_sale)
         self.ui.btn_update_2.clicked.connect(self.update_item_sale)
         self.ui.btn_delete_2.clicked.connect(self.del_item_sale)
         self.ui.btn_init_2.clicked.connect(self.init_item_sale)
+        self.ui.btn_explain.clicked.connect(self.explain_sale)
         # sale_detail_proc 버튼 연결
         self.ui.rdbtn_sp.clicked.connect(self.call_proc_sp)
         self.ui.rdbtn_mp.clicked.connect(self.call_proc_mp)
         # 마우스 우클릭시 메뉴
         pf.set_context_menu(self.ui.tableWidget, self.__update, self.__delete, self.__find)
         sf.set_context_menu_sale(self.ui.tableWidget_2, self.__update_sale, self.__delete_sale, self.__find_sale)
-        #menubar 추가
+
 
         self.ui.show()
 
@@ -215,6 +219,32 @@ class Application_form(QWidget):
         res = pdt.select(code)
         find_res = str(res[0][1])
         QMessageBox.information(self, '검색완료', find_res, QMessageBox.Ok)
+
+    def explain_sale(self):
+        file = 'ui/explain_sale.txt'
+        text = []
+        with open(file, 'r')as f:
+            line = f.readlines()
+            for lines in line:
+                text.append(lines)
+        msg = QMessageBox()
+        msg.setWindowTitle('sale 사용설명서')
+        msg.setText('\n'.join(text))
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
+
+    def explain_pd(self):
+        file = 'ui/explain_pd.txt'
+        text = []
+        with open(file, 'r')as f:
+            line = f.readlines()
+            for lines in line:
+                text.append(lines)
+        msg = QMessageBox()
+        msg.setWindowTitle('product 사용설명서')
+        msg.setText('\n'.join(text))
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
 
     def call_proc_sp(self):
         sdd = Sale_Detail_Dao()
