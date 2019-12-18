@@ -42,11 +42,9 @@ class ProductDao():
             conn = ConnectionPool.get_instance().get_connection()
             cursor = conn.cursor()
             if code is None:
-                #print(sql)
                 cursor.execute(sql)
             else:
                 args = (code,)
-                #print(sql_where)
                 cursor.execute(sql_where, args)
 
             data = []

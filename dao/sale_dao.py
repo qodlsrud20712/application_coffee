@@ -25,6 +25,23 @@ class SaleDao(Dao):
             cursor.close()
             conn.close()
 
+    def find_item(self, code = None):
+        sql_where = "SELECT no, code, price, saleCnt, marginRate FROM sale where code like %s"
+        try:
+            conn = ConnectionPool.get_instance().get_connection()
+            cursor = conn.cursor()
+            args = (code,)
+            cursor.execute(sql_where, args)
+
+            data = []
+            [data.append(row) for row in self.__iter_row(cursor, 5)]
+        except Error as e:
+            print(e)
+        finally:
+            cursor.close()
+            conn.close()
+            return data
+
     def insert_item(self, code = None, price=None, saleCnt =None, marginRate= None):
         args = (code, price, saleCnt, marginRate)
         try:

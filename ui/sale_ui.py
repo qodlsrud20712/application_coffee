@@ -30,14 +30,17 @@ class Sale_form():
         item_marginRate.setData(Qt.DisplayRole, marginRate)
         return item_no, item_code, item_price, item_saleCnt, item_marginRate
 
-    def set_context_menu_sale(self, tv, func, func2):
+    def set_context_menu_sale(self, tv, func, func2,func3):
         tv.setContextMenuPolicy(Qt.ActionsContextMenu)
         update_action = QAction('수정', tv)
         delete_action = QAction('삭제', tv)
+        find_action = QAction('검색', tv)
         tv.addAction(update_action)
         tv.addAction(delete_action)
+        tv.addAction(find_action)
         update_action.triggered.connect(func)
         delete_action.triggered.connect(func2)
+        find_action.triggered.connect(func3)
 
     def get_item_form_le_addsale(self, list = None):
         sdt = SaleDao()

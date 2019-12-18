@@ -1,9 +1,12 @@
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QMessageBox, QAction
+
+
 from dao.product_dao import ProductDao
 from dao.sale_dao import SaleDao
 from dao.sale_detail_dao import Sale_Detail_Dao
+from db_connection.connection_pool import ConnectionPool
 from ui.product_ui import Product_form
 from ui.sale_ui import Sale_form
 from ui.sdd_ui import Sale_Detail_form
@@ -19,19 +22,32 @@ def create_table(table=None, data=None):
     table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     return table
 
-
 class Application_form(QWidget):
 
     def __init__(self):
         super().__init__()
         pf = Product_form()
         sf = Sale_form()
+        pdt = ProductDao()
+        sdt = SaleDao()
+        sdd = Sale_Detail_Dao()
         self.ui = uic.loadUi("ui/application.ui")
+        #create table
         self.table = create_table(table=self.ui.tableWidget, data=['code', 'name'])
         self.table_sale = create_table(table=self.ui.tableWidget_2,
                                        data=['no', 'code', 'price', 'saleCnt', 'marginRate'])
         self.table_sdd = create_table(table=self.ui.table_sd,
                                       data=['no', 'sale_price', 'addTax', 'supply_price', 'marginPrice'])
+        self.table_sdd_proc = create_table(table=self.ui.table_proc,
+                                           data=['rank', 'code', 'name', 'price', 'saleCnt', 'supply_price', 'addTax',
+                                                 'sale_price', 'marginRate', 'marginPrice'])
+        #select data
+        res = pdt.select()
+        res2 = sdt.select_item()
+        res3 = sdd.select_item()
+        self.load_data(res)
+        self.load_data_sale(res2)
+        self.load_data_sale_detail(res3)
         # product 버튼 연결
         self.ui.btn_insert.clicked.connect(self.add_item)
         self.ui.btn_update.clicked.connect(self.update_item)
@@ -42,10 +58,12 @@ class Application_form(QWidget):
         self.ui.btn_update_2.clicked.connect(self.update_item_sale)
         self.ui.btn_delete_2.clicked.connect(self.del_item_sale)
         self.ui.btn_init_2.clicked.connect(self.init_item_sale)
-
+        # sale_detail_proc 버튼 연결
+        self.ui.rdbtn_sp.clicked.connect(self.call_proc_sp)
+        self.ui.rdbtn_mp.clicked.connect(self.call_proc_mp)
         # 마우스 우클릭시 메뉴
-        pf.set_context_menu(self.ui.tableWidget, self.__update, self.__delete)
-        sf.set_context_menu_sale(self.ui.tableWidget_2, self.__update_sale, self.__delete_sale)
+        pf.set_context_menu(self.ui.tableWidget, self.__update, self.__delete, self.__find)
+        sf.set_context_menu_sale(self.ui.tableWidget_2, self.__update_sale, self.__delete_sale, self.__find_sale)
         self.ui.show()
 
     def load_data(self, data=[]):
@@ -78,6 +96,18 @@ class Application_form(QWidget):
             self.ui.table_sd.insertRow(nextIdx)
             [self.ui.table_sd.setItem(nextIdx, i, item_list[i]) for i in range(len(item_list))]
 
+    def load_data_sale_detail_proc(self, data=None):
+        sdd = Sale_Detail_form()
+        for idx, (
+        rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate, marginPrice) in enumerate(data):
+            item_rank, item_code, item_name, item_price, item_saleCnt, item_supply_price, item_addTax, item_sale_price, item_marginRate, item_marginPrice = sdd.create_item_sdd_proc(
+                rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate, marginPrice)
+            item_list = [item_rank, item_code, item_name, item_price, item_saleCnt, item_supply_price, item_addTax,
+                         item_sale_price, item_marginRate, item_marginPrice]
+            nextIdx = self.ui.table_proc.rowCount()
+            self.ui.table_proc.insertRow(nextIdx)
+            [self.ui.table_proc.setItem(nextIdx, i, item_list[i]) for i in range(len(item_list))]
+
     def add_item(self):
         pf = Product_form()
         item_code, item_name = pf.get_item_form_le_addpdt(self.ui.le_code.text(), self.ui.le_name.text())
@@ -89,7 +119,8 @@ class Application_form(QWidget):
 
     def add_item_sale(self):
         sf = Sale_form()
-        le_list = [self.ui.le_code_2.text(), self.ui.le_price.text(),self.ui.le_saleCnt.text(),  self.ui.le_marginR.text()]
+        le_list = [self.ui.le_code_2.text(), self.ui.le_price.text(), self.ui.le_saleCnt.text(),
+                   self.ui.le_marginR.text()]
         item_no, item_code, item_price, item_saleCnt, item_marginRate = sf.get_item_form_le_addsale(le_list)
         item_list = [item_no, item_code, item_price, item_saleCnt, item_marginRate]
         currentIdx = self.ui.tableWidget_2.rowCount()
@@ -99,7 +130,7 @@ class Application_form(QWidget):
 
     def update_item(self):
         pf = Product_form()
-        item_code, item_name = pf.get_item_form_le_updatepdt(self.ui.le_code.text(),self.ui.le_name.text())
+        item_code, item_name = pf.get_item_form_le_updatepdt(self.ui.le_code.text(), self.ui.le_name.text())
         selectionIdxs = self.ui.tableWidget.selectedIndexes()[0]
         self.ui.tableWidget.setItem(selectionIdxs.row(), 0, item_code)
         self.ui.tableWidget.setItem(selectionIdxs.row(), 1, item_name)
@@ -165,6 +196,41 @@ class Application_form(QWidget):
         self.ui.table_sd.removeRow(selectionIdxs.row())
         sdt.delete_item(no)
         QMessageBox.information(self, 'Delete', '확인', QMessageBox.Ok)
+
+    def __find(self):
+        try:
+            sdt = SaleDao()
+            selectionIdxs = self.ui.tableWidget.selectedIndexes()[0]
+            code = self.ui.tableWidget.item(selectionIdxs.row(), 0).text()
+            res = sdt.find_item(code)
+            find_res = str(res[0][2])
+            QMessageBox.information(self, '검색완료', find_res+'원', QMessageBox.Ok)
+        except IndexError as e:
+            QMessageBox.information(self, '오류', 'sale에 값이 존재하지 않습니다.', QMessageBox.Ok)
+
+    def __find_sale(self):
+        pdt = ProductDao()
+        selectionIdxs = self.ui.tableWidget_2.selectedIndexes()[0]
+        code = self.ui.tableWidget_2.item(selectionIdxs.row(), 1).text()
+        res = pdt.select(code)
+        find_res = str(res[0][1])
+        QMessageBox.information(self, '검색완료', find_res, QMessageBox.Ok)
+
+    def call_proc_sp(self):
+        sdd = Sale_Detail_Dao()
+        res = sdd.call_order_price_by_issale('proc_saledetail_orderby', False)
+        row_res = self.ui.table_proc.rowCount()
+        for i in reversed(range(row_res)):
+            self.ui.table_proc.removeRow(i)
+        self.load_data_sale_detail_proc(res)
+
+    def call_proc_mp(self):
+        sdd = Sale_Detail_Dao()
+        res = sdd.call_order_price_by_issale('proc_saledetail_orderby', True)
+        row_res = self.ui.table_proc.rowCount()
+        for i in reversed(range(row_res)):
+            self.ui.table_proc.removeRow(i)
+        self.load_data_sale_detail_proc(res)
 
     def init_item(self):
         pdt = ProductDao()

@@ -40,4 +40,24 @@ class Sale_Detail_Dao(Dao):
             for row in rows:
                 yield row
 
+    def call_order_price_by_issale(self, query, isSale):
+        try:
+            conn = ConnectionPool.get_instance().get_connection()
+            cursor = conn.cursor()
+
+            args = [isSale, ]
+            cursor.callproc(query, args)
+            res = []
+            for result in cursor.stored_results():
+                rows = result.fetchall()
+                for row in rows:
+                    res.append(row)
+            return res
+        except Error as e:
+            print(e)
+
+        finally:
+            cursor.close()
+            conn.close()
+
 
