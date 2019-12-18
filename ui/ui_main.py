@@ -1,8 +1,6 @@
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QMessageBox, QAction
-
-
 from dao.product_dao import ProductDao
 from dao.sale_dao import SaleDao
 from dao.sale_detail_dao import Sale_Detail_Dao
@@ -64,6 +62,8 @@ class Application_form(QWidget):
         # 마우스 우클릭시 메뉴
         pf.set_context_menu(self.ui.tableWidget, self.__update, self.__delete, self.__find)
         sf.set_context_menu_sale(self.ui.tableWidget_2, self.__update_sale, self.__delete_sale, self.__find_sale)
+        #menubar 추가
+
         self.ui.show()
 
     def load_data(self, data=[]):

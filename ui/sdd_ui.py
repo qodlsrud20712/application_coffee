@@ -13,22 +13,23 @@ class Sale_Detail_form():
 
         item_salePrice = QTableWidgetItem()
         item_salePrice.setTextAlignment(Qt.AlignCenter)
-        item_salePrice.setData(Qt.DisplayRole, salePrice)
+        item_salePrice.setData(Qt.DisplayRole, format(int(salePrice), ',d'))
 
         item_addTax = QTableWidgetItem()
         item_addTax.setTextAlignment(Qt.AlignCenter)
-        item_addTax.setData(Qt.DisplayRole, addTax)
+        item_addTax.setData(Qt.DisplayRole, format(int(addTax), ',d'))
 
         item_supPrice = QTableWidgetItem()
         item_supPrice.setTextAlignment(Qt.AlignCenter)
-        item_supPrice.setData(Qt.DisplayRole, supPrice)
+        item_supPrice.setData(Qt.DisplayRole, format(int(supPrice), ',d'))
 
         item_marPrice = QTableWidgetItem()
         item_marPrice.setTextAlignment(Qt.AlignCenter)
-        item_marPrice.setData(Qt.DisplayRole, marPrice)
+        item_marPrice.setData(Qt.DisplayRole, format(int(marPrice), ',d'))
         return item_no_sd, item_salePrice, item_addTax, item_supPrice, item_marPrice
 
-    def create_item_sdd_proc(self, rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate, marginPrice):
+    def create_item_sdd_proc(self, rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate,
+                             marginPrice):
         item_rank = QTableWidgetItem()
         item_rank.setTextAlignment(Qt.AlignCenter)
         item_rank.setData(Qt.DisplayRole, rank)
@@ -43,7 +44,7 @@ class Sale_Detail_form():
 
         item_price = QTableWidgetItem()
         item_price.setTextAlignment(Qt.AlignCenter)
-        item_price.setData(Qt.DisplayRole, price)
+        item_price.setData(Qt.DisplayRole, format(int(price),',d'))
 
         item_saleCnt = QTableWidgetItem()
         item_saleCnt.setTextAlignment(Qt.AlignCenter)
@@ -51,21 +52,21 @@ class Sale_Detail_form():
 
         item_supply_price = QTableWidgetItem()
         item_supply_price.setTextAlignment(Qt.AlignCenter)
-        item_supply_price.setData(Qt.DisplayRole, supply_price)
+        item_supply_price.setData(Qt.DisplayRole, format(int(supply_price),',d'))
 
         item_addTax = QTableWidgetItem()
         item_addTax.setTextAlignment(Qt.AlignCenter)
-        item_addTax.setData(Qt.DisplayRole, addTax)
+        item_addTax.setData(Qt.DisplayRole, format(int(addTax),',d'))
 
         item_sale_price = QTableWidgetItem()
         item_sale_price.setTextAlignment(Qt.AlignCenter)
-        item_sale_price.setData(Qt.DisplayRole, sale_price)
+        item_sale_price.setData(Qt.DisplayRole, format(int(sale_price),',d'))
 
         item_marginRate = QTableWidgetItem()
         item_marginRate.setTextAlignment(Qt.AlignCenter)
-        item_marginRate.setData(Qt.DisplayRole, marginRate)
+        item_marginRate.setData(Qt.DisplayRole, str(marginRate)+'%')
 
         item_marginPrice = QTableWidgetItem()
         item_marginPrice.setTextAlignment(Qt.AlignCenter)
-        item_marginPrice.setData(Qt.DisplayRole, marginPrice)
-        return item_rank, item_code, item_name, item_price, item_saleCnt, item_supply_price,item_addTax,item_sale_price, item_marginRate, item_marginPrice
+        item_marginPrice.setData(Qt.DisplayRole, format(int(marginPrice),',d'))
+        return item_rank, item_code, item_name, item_price, item_saleCnt, item_supply_price, item_addTax, item_sale_price, item_marginRate, item_marginPrice

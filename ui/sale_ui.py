@@ -19,7 +19,7 @@ class Sale_form():
 
         item_price = QTableWidgetItem()
         item_price.setTextAlignment(Qt.AlignCenter)
-        item_price.setData(Qt.DisplayRole, price)
+        item_price.setData(Qt.DisplayRole, format(int(price), ',d'))
 
         item_saleCnt = QTableWidgetItem()
         item_saleCnt.setTextAlignment(Qt.AlignCenter)
@@ -27,7 +27,7 @@ class Sale_form():
 
         item_marginRate = QTableWidgetItem()
         item_marginRate.setTextAlignment(Qt.AlignCenter)
-        item_marginRate.setData(Qt.DisplayRole, marginRate)
+        item_marginRate.setData(Qt.DisplayRole, str(marginRate)+'%')
         return item_no, item_code, item_price, item_saleCnt, item_marginRate
 
     def set_context_menu_sale(self, tv, func, func2,func3):
