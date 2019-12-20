@@ -1,11 +1,8 @@
 from PyQt5 import uic
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QMessageBox, QAction, \
-    QVBoxLayout, QMenuBar
+from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QMessageBox
 from dao.product_dao import ProductDao
 from dao.sale_dao import SaleDao
 from dao.sale_detail_dao import Sale_Detail_Dao
-from db_connection.connection_pool import ConnectionPool
 from ui.product_ui import Product_form
 from ui.sale_ui import Sale_form
 from ui.sdd_ui import Sale_Detail_form
@@ -21,6 +18,7 @@ def create_table(table=None, data=None):
     table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     return table
 
+
 class Application_form(QWidget):
 
     def __init__(self):
@@ -31,7 +29,7 @@ class Application_form(QWidget):
         sdt = SaleDao()
         sdd = Sale_Detail_Dao()
         self.ui = uic.loadUi("ui/application.ui")
-        #create table
+        # create table
         self.table = create_table(table=self.ui.tableWidget, data=['code', 'name'])
         self.table_sale = create_table(table=self.ui.tableWidget_2,
                                        data=['no', 'code', 'price', 'saleCnt', 'marginRate'])
@@ -40,7 +38,7 @@ class Application_form(QWidget):
         self.table_sdd_proc = create_table(table=self.ui.table_proc,
                                            data=['rank', 'code', 'name', 'price', 'saleCnt', 'supply_price', 'addTax',
                                                  'sale_price', 'marginRate', 'marginPrice'])
-        #select data
+        # select data
         res = pdt.select()
         res2 = sdt.select_item()
         res3 = sdd.select_item()
@@ -53,7 +51,6 @@ class Application_form(QWidget):
         self.ui.btn_delete.clicked.connect(self.del_item)
         self.ui.btn_init.clicked.connect(self.init_item)
         self.ui.btn_pd_explain.clicked.connect(self.explain_pd)
-
         # sale 버튼 연결
         self.ui.btn_insert_2.clicked.connect(self.add_item_sale)
         self.ui.btn_update_2.clicked.connect(self.update_item_sale)
@@ -66,7 +63,6 @@ class Application_form(QWidget):
         # 마우스 우클릭시 메뉴
         pf.set_context_menu(self.ui.tableWidget, self.__update, self.__delete, self.__find)
         sf.set_context_menu_sale(self.ui.tableWidget_2, self.__update_sale, self.__delete_sale, self.__find_sale)
-
 
         self.ui.show()
 
@@ -103,7 +99,8 @@ class Application_form(QWidget):
     def load_data_sale_detail_proc(self, data=None):
         sdd = Sale_Detail_form()
         for idx, (
-        rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate, marginPrice) in enumerate(data):
+                rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate,
+                marginPrice) in enumerate(data):
             item_rank, item_code, item_name, item_price, item_saleCnt, item_supply_price, item_addTax, item_sale_price, item_marginRate, item_marginPrice = sdd.create_item_sdd_proc(
                 rank, code, name, price, saleCnt, supply_price, addTax, sale_price, marginRate, marginPrice)
             item_list = [item_rank, item_code, item_name, item_price, item_saleCnt, item_supply_price, item_addTax,
@@ -175,9 +172,9 @@ class Application_form(QWidget):
         self.ui.le_name.setText(returnIdxs2)
 
     def __update_sale(self):
+        rtIdxs1, rtIdxs2, rtIdxs3, rtIdxs4, rtIdxs5 = None, None, None, None, None
         selectionIdxs = self.ui.tableWidget_2.selectedIndexes()[0]
         sr = selectionIdxs.row()
-        rtIdxs1, rtIdxs2, rtIdxs3, rtIdxs4, rtIdxs5 = None, None, None, None, None
         Idxs_list = [rtIdxs1, rtIdxs2, rtIdxs3, rtIdxs4, rtIdxs5]
         for i in range(len(Idxs_list)):
             Idxs_list[i] = self.ui.tableWidget_2.item(sr, i).text()
@@ -208,7 +205,7 @@ class Application_form(QWidget):
             code = self.ui.tableWidget.item(selectionIdxs.row(), 0).text()
             res = sdt.find_item(code)
             find_res = str(res[0][2])
-            QMessageBox.information(self, '검색완료', find_res+'원', QMessageBox.Ok)
+            QMessageBox.information(self, '검색완료', find_res + '원', QMessageBox.Ok)
         except IndexError as e:
             QMessageBox.information(self, '오류', 'sale에 값이 존재하지 않습니다.', QMessageBox.Ok)
 

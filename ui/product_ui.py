@@ -1,6 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QTableWidgetItem, QAction
-
+from PyQt5.QtWidgets import QTableWidgetItem, QAction, QMessageBox
 from dao.product_dao import ProductDao
 
 

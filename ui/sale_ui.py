@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QTableWidgetItem, QAction
+from PyQt5.QtWidgets import QTableWidgetItem, QAction, QMessageBox
 
 from dao.sale_dao import SaleDao
 
@@ -61,3 +61,5 @@ class Sale_form():
         marginRate = list[4]
         sdt.update_item(code, price, saleCnt, marginRate, no)
         return self.create_item_sale(no, code, price, saleCnt, marginRate)
+
+
